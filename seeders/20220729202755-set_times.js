@@ -24,8 +24,8 @@ module.exports = {
         stage_id: 3,
         band_id: 4,
         genre: "Trance",
-        start_time: "2022-08-02 15:00:00",
-        end_time: "2022-08-02 16:00:00",
+        start_time: "2022-08-02 16:00:00",
+        end_time: "2022-08-02 17:00:00",
       },
     ])
   },

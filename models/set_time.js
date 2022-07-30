@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      event_id: { type: DataTypes.INTEGER, allowNull: false },
+      event_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       stage_id: { type: DataTypes.INTEGER, allowNull: false },
       band_id: { type: DataTypes.INTEGER, allowNull: false },
       genre: { type: DataTypes.TEXT, allowNull: false },

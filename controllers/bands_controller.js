@@ -1,14 +1,20 @@
 // Dependencies
-const bands = require("express").Router()
-const db = require("../models")
+const bands = require('express').Router()
+const db = require('../models')
 const { Band } = db
+const { Op } = require('sequelize')
 
 // Routes
 
 // SHOW (get all bands)
-bands.get("/", async (req, res) => {
+bands.get('/', async (req, res) => {
   try {
-    const foundBands = await Band.findAll()
+    const foundBands = await Band.findAll({
+      order: [['available_start_time', 'ASC']],
+      where: {
+        name: { [Op.like]: `%${req.query.name ? req.query.name : ''}%` },
+      },
+    })
     res.status(200).json(foundBands)
   } catch (err) {
     res.status(500).json(err)
@@ -16,11 +22,11 @@ bands.get("/", async (req, res) => {
 })
 
 // POST Create new band
-bands.post("/", async (req, res) => {
+bands.post('/', async (req, res) => {
   try {
     const newBand = await Band.create(req.body)
     res.status(200).json({
-      message: "Successfully inserted a new band",
+      message: 'Successfully inserted a new band',
       data: newBand,
     })
   } catch (err) {
@@ -29,7 +35,7 @@ bands.post("/", async (req, res) => {
 })
 
 // UPDATE band
-bands.put("/:id", async (req, res) => {
+bands.put('/:id', async (req, res) => {
   try {
     const updatedBands = await Band.update(req.body, {
       where: {
@@ -45,7 +51,7 @@ bands.put("/:id", async (req, res) => {
 })
 
 // DELETE Band
-bands.delete("/:id", async (req, res) => {
+bands.delete('/:id', async (req, res) => {
   try {
     const deletedBands = await Band.destroy({
       where: {
@@ -61,7 +67,7 @@ bands.delete("/:id", async (req, res) => {
 })
 
 // Get single band by id
-bands.get("/:id", async (req, res) => {
+bands.get('/:id', async (req, res) => {
   try {
     const foundBand = await Band.findOne({
       where: { band_id: req.params.id },

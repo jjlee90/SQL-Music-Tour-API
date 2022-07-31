@@ -1,15 +1,22 @@
 // Dependencies
 const events = require('express').Router()
 const db = require('../models')
-const bands = require('./bands_controller')
 const { Event } = db
+const { Op } = require('sequelize')
 
 // Routes
 
 // Show
 events.get('/', async (req, res) => {
   try {
-    const foundEvents = await Event.findAll()
+    const foundEvents = await Event.findAll({
+      order: [['start_time', 'ASC']],
+      where: {
+        event_name: {
+          [Op.like]: `%${req.query.event_name ? req.query.event_name : ''}%`,
+        },
+      },
+    })
     res.status(200).json(foundEvents)
   } catch (err) {
     res.status(500).json(err)

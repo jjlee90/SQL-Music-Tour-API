@@ -1,7 +1,7 @@
 // Dependencies
 const events = require('express').Router()
 const db = require('../models')
-const { Event } = db
+const { Event, Stage, Set_time, Meet_greet, Band } = db
 const { Op } = require('sequelize')
 
 // Routes
@@ -18,6 +18,41 @@ events.get('/', async (req, res) => {
       },
     })
     res.status(200).json(foundEvents)
+  } catch (err) {
+    res.status(500).json(err)
+  }
+})
+
+// Get single id
+events.get('/:event_name', async (req, res) => {
+  try {
+    const foundEvent = await Event.findOne({
+      where: { event_name: req.params.event_name },
+      include: [
+        {
+          model: Meet_greet,
+          as: 'meet_greets',
+          include: {
+            model: Band,
+            as: 'band',
+          },
+        },
+        {
+          model: Set_time,
+          as: 'set_times',
+          include: [
+            { model: Band, as: 'band' },
+            { model: Stage, as: 'stage' },
+          ],
+        },
+        {
+          model: Stage,
+          as: 'stages',
+          through: { attributes: [] },
+        },
+      ],
+    })
+    res.status(200).json(foundEvent)
   } catch (err) {
     res.status(500).json(err)
   }
@@ -63,18 +98,6 @@ events.delete('/:id', async (req, res) => {
     res.status(200).json({
       message: `deleted event ${deletedEvent}`,
     })
-  } catch (err) {
-    res.status(500).json(err)
-  }
-})
-
-// Get single id
-events.get('/:id', async (req, res) => {
-  try {
-    const foundEvent = await Event.findOne({
-      where: { event_id: req.params.id },
-    })
-    res.status(200).json(foundEvent)
   } catch (err) {
     res.status(500).json(err)
   }

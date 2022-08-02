@@ -1,7 +1,7 @@
 // Dependencies
 const stages = require('express').Router()
 const db = require('../models')
-const { Stage } = db
+const { Stage, Event, Stage_Event } = db
 const { Op } = require('sequelize')
 
 // Routes
@@ -69,14 +69,19 @@ stages.delete('/:id', async (req, res) => {
 })
 
 // Get single stage by id
-stages.get('/:id', async (req, res) => {
+stages.get('/:name', async (req, res) => {
   try {
     const foundStage = await Stage.findOne({
-      where: { stage_id: req.params.id },
+      where: { stage_name: req.params.name },
+      include: {
+        model: Event,
+        as: 'events',
+        through: { attributes: [] },
+      },
     })
     res.status(200).json(foundStage)
   } catch (err) {
-    err.status(500).json(err)
+    res.status(500).json(err)
   }
 })
 
